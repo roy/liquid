@@ -33,7 +33,7 @@ Liquid is a template engine which I wrote for very specific requirements
 
 ## Rails 3
 
-This fork of Liquid exists to make it work with Rails 3. Unfortunately, it doesn't work smoothly with layouts and requires a workaround. The way I have made it render the content with a layout is to use render\_to\_string to render the action's view with layout set to nil, then manually add that to view\_assigns. This looks like:
+This fork of Liquid exists to make it work with Rails 3. Unfortunately, it doesn't work smoothly with layouts and requires a workaround. The way I have made it render the content with a layout is to use [render\_to\_string](http://rails.rubyonrails.org/classes/ActionController/Base.html#M000465) to render the action's view with layout set to nil, then manually add that to view\_assigns. This looks like:
 
     def index # or any other controller action
       @content_for_layout = render_to_string(:action => :index, :layout => nil)
