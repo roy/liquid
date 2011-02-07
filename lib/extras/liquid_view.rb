@@ -12,7 +12,11 @@ class LiquidView
                                      @helpers @assigns_added @template @_render_stack @template_format @assigns )
   
   def self.call(template)
-    "LiquidView.new(self).render(template, local_assigns)"
+    if template.respond_to?(:source)
+      "LiquidView.new(self).render(#{template.source.inspect}, local_assigns)"
+    else
+      "LiquidView.new(self).render(template, local_assigns)"
+    end
   end
 
   def initialize(view)
@@ -41,7 +45,14 @@ class LiquidView
     assigns.merge!(local_assigns.stringify_keys)
     
     liquid = Liquid::Template.parse(source)
-    liquid.render(assigns, :filters => [@view.controller.master_helper_module], :registers => {:action_view => @view, :controller => @view.controller})
+
+    filters = if @view.controller.respond_to?(:master_helper_module)
+                [@view.controller.master_helper_module]
+              else
+                [@view.controller._helpers]
+              end
+
+    liquid.render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
   end
 
   def compilable?
