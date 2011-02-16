@@ -46,10 +46,14 @@ class LiquidView
     
     liquid = Liquid::Template.parse(source)
 
-    filters = if @view.controller.respond_to?(:master_helper_module)
-                [@view.controller.master_helper_module]
+    controller = @view.controller
+
+    filters = if controller.respond_to?(:liquid_filters, true)
+                controller.send(:liquid_filters)
+              elsif controller.respond_to?(:master_helper_module)
+                [controller.master_helper_module]
               else
-                [@view.controller._helpers]
+                [controller._helpers]
               end
 
     liquid.render(assigns, :filters => filters, :registers => {:action_view => @view, :controller => @view.controller})
