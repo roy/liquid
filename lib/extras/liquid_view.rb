@@ -39,8 +39,8 @@ class LiquidView
     source = template.respond_to?(:source) ? template.source : template
     local_assigns = (template.respond_to?(:locals) ? template.locals : local_assigns) || {}
     
-    if content_for_layout = @view.instance_variable_get("@content_for_layout")
-      assigns['content_for_layout'] = content_for_layout
+    if @view.content_for?(:layout)
+      assigns['content_for_layout'] = @view.content_for(:layout)
     end
     assigns.merge!(local_assigns.stringify_keys)
     
